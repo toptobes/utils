@@ -42,7 +42,7 @@ main = do
 getText :: Bool -> Text -> UtActionF ()
 getText nocopy text = do
   unless nocopy $
-    runSysCmd ("echo " <> text <> " | clip.exe")
+    runSysCmd ("powershell.exe Set-Clipboard " <> text)
   printText text
 
 saveIVim :: UtActionF ()
