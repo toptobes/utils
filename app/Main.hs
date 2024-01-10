@@ -32,8 +32,8 @@ main = do
     Forall {..} -> getText nocp "∀"
     Lambda {..} -> getText nocp "λ"
 
-    IVim { save = True } -> saveIVim
-    IVim {} -> printIVim
+    IVim { save = True } -> saveIdeaVim
+    IVim {} -> printIdeaVim
 
     MIT {..} -> printMIT name
 
@@ -52,13 +52,13 @@ getText nocopy text = do
     runSysCmd ("powershell.exe Set-Clipboard " <> text)
   printText text
 
-saveIVim :: UtActionF ()
-saveIVim = do
+saveIdeaVim :: UtActionF ()
+saveIdeaVim = do
   vimDir <- wAbsTPath "vim/"
-  runSysCmd $ [r| cp "$(wslpath "$(wslvar USERPROFILE)")/.IVimrc" |] <> vimDir
+  runSysCmd $ [r| cp "$(wslpath "$(wslvar USERPROFILE)")/.ideavimrc" |] <> vimDir
 
-printIVim :: UtActionF ()
-printIVim = runSysCmd [r| cat "$(wslpath "$(wslvar USERPROFILE)")/.IVimrc" |]
+printIdeaVim :: UtActionF ()
+printIdeaVim = runSysCmd [r| cat "$(wslpath "$(wslvar USERPROFILE)")/.ideavimrc" |]
 
 printMIT :: Text -> UtActionF ()
 printMIT name = do
