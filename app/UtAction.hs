@@ -12,9 +12,9 @@ type UtActionF = Free UtAction
 data UtAction next
   = RunSysCmd Text next
   | PrintText Text next
-  | WTemplate Text (Text -> next)
-  | WAbsTPath Text (Text -> next)
-  | WCurrYear (Integer -> next)
+  | WithTemplate Text (Text -> next)
+  | WithAbsTPath Text (Text -> next)
+  | WithCurrYear (Integer -> next)
   deriving (Functor)
 
 $(makeFree ''UtAction)
@@ -23,6 +23,6 @@ runActions :: Free UtAction a -> IO a
 runActions = iterM go where 
   go (RunSysCmd (toString -> cmd) next) = system cmd >> next
   go (PrintText text next) = putTextLn text >> next
-  go (WTemplate path next) = readTemplate path >>= next
-  go (WAbsTPath path next) = templatePath path >>= next 
-  go (WCurrYear next) = year >>= next
+  go (WithTemplate path next) = readTemplate path >>= next
+  go (WithAbsTPath path next) = templatePath path >>= next 
+  go (WithCurrYear next) = year >>= next

@@ -54,16 +54,16 @@ getText nocopy text = do
 
 saveIdeaVim :: UtActionF ()
 saveIdeaVim = do
-  vimDir <- wAbsTPath "vim/"
+  vimDir <- withAbsTPath "dotfiles/"
   runSysCmd $ [r| cp "$(wslpath "$(wslvar USERPROFILE)")/.ideavimrc" |] <> vimDir
 
 printIdeaVim :: UtActionF ()
-printIdeaVim = runSysCmd [r| cat "$(wslpath "$(wslvar USERPROFILE)")/.ideavimrc" |]
+printIdeaVim = withTemplate "dotfiles/.ideavimrc" >>= printText
 
 printMIT :: Text -> UtActionF ()
 printMIT name = do
-  year' <- wCurrYear
-  licence <- wTemplate "licences/MIT"
+  year' <- withCurrYear
+  licence <- withTemplate "licences/MIT"
 
   printText 
     $ var "year" (show year') 
@@ -72,7 +72,7 @@ printMIT name = do
 
 hpackNew :: Text -> UtActionF ()
 hpackNew name = do
-  template <- wTemplate "haskell/package.yaml"
+  template <- withTemplate "haskell/package.yaml"
   printText $ var "name" name template
 
 hpackAdd :: Text -> UtActionF ()
@@ -105,5 +105,5 @@ hpackRegen = runSysCmd "hpack"
 
 jb :: Text -> FilePath -> UtActionF ()
 jb ide fp = do
-  path <- wAbsTPath "scripts/jb"
+  path <- withAbsTPath "scripts/jb"
   runSysCmd $ unwords [path, ide, toText fp]
