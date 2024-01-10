@@ -8,16 +8,23 @@ import Text.RawString.QQ
 import Utils
 
 data Ut w
-  = Hp     { new  :: Maybe Text, add :: w ::: Maybe Text <#> "a", rm :: w ::: Maybe Text <#> "d" }
-  | MIT    { name :: w ::: Text <#> "n" <!> "toptobes"}
+  = Hp     { new  :: Maybe Text, add :: Maybe Text, rm :: w ::: Maybe Text <#> "d" }
+  | MIT    { name :: w ::: Text <!> "toptobes"}
   | Forall { nocp :: Bool }
   | Lambda { nocp :: Bool }
-  | IVim   { save :: w ::: Bool <#> "s" }
+  | IVim   { save :: Bool }
   | JB     Text (Maybe FilePath)
   deriving (Generic)
 
 deriving instance Show (Ut Unwrapped)
-deriving instance ParseRecord (Ut Wrapped)
+
+instance ParseRecord (Ut Wrapped) where 
+  parseRecord = parseRecordWithModifiers modifiers
+
+modifiers :: Modifiers
+modifiers = defaultModifiers
+  { shortNameModifier = firstLetter
+  }
 
 main :: IO ()
 main = do
