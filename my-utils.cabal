@@ -1,0 +1,57 @@
+cabal-version: 2.0
+
+-- This file has been generated from package.yaml by hpack version 0.35.2.
+--
+-- see: https://github.com/sol/hpack
+
+name:           my-utils
+version:        0.1.0.0
+author:         toptobes
+maintainer:     toptobes
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+executable app
+  main-is: Main.hs
+  other-modules:
+      UtAction
+      Utils
+      Paths_my_utils
+  autogen-modules:
+      Paths_my_utils
+  hs-source-dirs:
+      app
+  default-extensions:
+      LambdaCase
+      BlockArguments
+      RecordWildCards
+      OverloadedRecordDot
+      OverloadedStrings
+      DuplicateRecordFields
+      DeriveAnyClass
+      DerivingStrategies
+      FunctionalDependencies
+      UnicodeSyntax
+      LinearTypes
+      DataKinds
+      TypeFamilies
+      GADTs
+      ViewPatterns
+      NoFieldSelectors
+  ghc-options: -Wall -O1
+  build-depends:
+      base >=4.16.4.0
+    , directory
+    , file-embed
+    , free
+    , optparse-generic
+    , process
+    , raw-strings-qq
+    , relude >=1.2.0.0
+    , time
+  mixins:
+      base hiding (Prelude)
+    , relude (Relude as Prelude)
+    , relude 
+  default-language: GHC2021

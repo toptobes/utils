@@ -1,0 +1,51 @@
+name: my-utils
+version: 0.1.0.0
+license: MIT
+author: toptobes
+
+language: GHC2021
+
+ghc-options:
+  - -Wall
+  - -O1
+
+default-extensions:
+  - LambdaCase
+  - BlockArguments
+  - RecordWildCards
+  - OverloadedRecordDot
+  - OverloadedStrings
+  - DuplicateRecordFields
+  - DeriveAnyClass
+  - DerivingStrategies
+  - FunctionalDependencies
+  - UnicodeSyntax
+  - LinearTypes
+  - DataKinds
+  - TypeFamilies
+  - GADTs
+  - ViewPatterns
+  - NoFieldSelectors
+
+dependencies:
+  - name: base
+    version: ">=4.16.4.0"
+    mixin:
+      - hiding (Prelude)
+  - name: relude
+    version: ">=1.2.0.0"
+    mixin:
+      - (Relude as Prelude)
+      - ""
+  - optparse-generic
+  - raw-strings-qq
+  - directory
+  - process
+  - free
+  - time
+  - file-embed
+
+executables:
+  app:
+    main: Main.hs
+    source-dirs: app

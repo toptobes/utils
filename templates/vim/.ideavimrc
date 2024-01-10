@@ -1,0 +1,63 @@
+"" Source your .vimrc
+"source ~/.vimrc
+
+let mapleader=" "
+
+"" -- Suggested options --
+" Show a few lines of context around the cursor. Note that this makes the
+" text scroll if you mouse-click near the start or end of the window.
+set scrolloff=5
+
+" Do incremental searching.
+set incsearch
+
+" Don't use Ex mode, use Q for formatting.
+map Q gq
+
+"" -- Map IDE actions to IdeaVim -- https://jb.gg/abva4t
+"" Map \r to the Reformat Code action
+"map \r <Action>(ReformatCode)
+
+"" Map <leader>d to start debug
+"map <leader>d <Action>(Debug)
+
+"" Map \b to toggle the breakpoint on the current line
+"map \b <Action>(ToggleLineBreakpoint)
+
+" Find more examples here: https://jb.gg/share-ideavimrc
+
+" Use system clipboard when pasting (or something)
+set clipboard+=unnamed
+
+" Disable <Esc> in insert mode f/c it's too easy to hit accidentally when tabbing out of autocomplete
+" inoremap <Esc> <Nop>
+
+" esc in insert & command mode
+inoremap kj <esc>
+cnoremap kj <C-C>
+
+" reduces timeout length from 2000ms
+set timeoutlen=1000
+
+set easymotion
+
+" Quickly insert an empty new line without entering insert mode
+nnoremap <Leader>o o<Esc>0
+nnoremap <Leader>O O<Esc>0
+
+" EasyMotion search
+nmap s <Plug>(easymotion-s2)
+
+set relativenumber
+
+" Plugin to visualize what I've yanked
+Plug 'machakann/vim-highlightedyank'
+
+" Forces me to use hjkl
+noremap <Up> <NOP>
+noremap <Down> <NOP>
+noremap <Left> <NOP>
+noremap <Right> <NOP>
+
+" gD goes to implementation
+nmap gD :action GotoImplementation<CR>
