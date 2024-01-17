@@ -13,6 +13,7 @@ data Ut w
   | Forall { nocp :: Bool }
   | Lambda { nocp :: Bool }
   | IVim   { save :: Bool }
+  | OVim   { save :: Bool }
   | JB     Text (Maybe FilePath)
   deriving (Generic)
 
@@ -34,6 +35,9 @@ main = do
 
     IVim { save = True } -> saveIdeaVim
     IVim {} -> printIdeaVim
+
+    OVim { save = True } -> saveObsidianVim
+    OVim {} -> printObsidianVim
 
     MIT {..} -> printMIT name
 
@@ -59,6 +63,14 @@ saveIdeaVim = do
 
 printIdeaVim :: UtActionF ()
 printIdeaVim = withTemplate "dotfiles/.ideavimrc" >>= printText
+
+saveObsidianVim :: UtActionF ()
+saveObsidianVim = do
+  vimDir <- withAbsTPath "dotfiles/.obsidian.vimrc"
+  runSysCmd $ "cp " <> vimDir <> [r| "$(wslpath "$(wslvar USERPROFILE)")/Documents/Obsidian Vault/.obsidian.vimrc" |]
+
+printObsidianVim :: UtActionF ()
+printObsidianVim = withTemplate "dotfiles/.obsidian.vimrc" >>= printText
 
 printMIT :: Text -> UtActionF ()
 printMIT name = do
