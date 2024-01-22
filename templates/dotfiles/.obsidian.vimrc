@@ -18,9 +18,6 @@ set clipboard+=unnamed
 inoremap kj <Esc>
 cnoremap kj <C-C>
 
-" reduces timeout length from 2000ms
-set timeoutlen=1000
-
 " Quickly insert an empty new line without entering insert mode
 nnoremap <Leader>o o<Esc>0
 nnoremap <Leader>O O<Esc>0
