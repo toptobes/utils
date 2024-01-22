@@ -1,9 +1,12 @@
+{-# LANGUAGE QuasiQuotes #-}
+
 module Utils where
 
 import System.Directory
 import Data.Text qualified as T
 import Data.Time.Clock
 import Data.Time.Calendar
+import Text.RawString.QQ
 
 (.-) :: (a -> b) -> (b -> c) -> a -> c
 f .- g = g . f
@@ -30,3 +33,6 @@ date = getCurrentTime <&> utctDay .- toGregorian
 
 year :: IO Integer
 year = (\(y, _, _) -> y) <$> date
+
+fromWinHome :: Text -> Text
+fromWinHome path = [r|$(wslpath "$(wslvar USERPROFILE)")/|] <> path

@@ -6,6 +6,7 @@ import Options.Generic
 import UtAction
 import Text.RawString.QQ
 import Utils
+import Data.HashMap.Lazy (lookup)
 
 data Ut w
   = Hp     { new  :: Maybe Text, add :: Maybe Text, rm :: w ::: Maybe Text <#> "d" }
@@ -14,6 +15,7 @@ data Ut w
   | Lambda { nocp :: Bool }
   | IVim   { save :: Bool }
   | OVim   { save :: Bool }
+  | Obsid  { bkup :: Text }
   | JB     Text (Maybe FilePath)
   deriving (Generic)
 
@@ -45,6 +47,8 @@ main = do
     Hp { add = Just name } -> hpackAdd name
     Hp { rm  = Just name } -> hpackDel name
     Hp {} -> error "hpack needs at least one option."
+
+    Obsid name -> backupObsidian name
 
     JB ide fp -> jb ide (fp ?: "")
 
@@ -119,3 +123,13 @@ jb :: Text -> FilePath -> UtActionF ()
 jb ide fp = do
   path <- withAbsTPath "scripts/jb"
   runSysCmd $ unwords [path, ide, toText fp]
+
+vaults :: HashMap Text Text
+vaults = fromList [("main", fromWinHome "Documents/Obsidian Vault")]
+
+backupObsidian :: Text -> UtActionF ()
+backupObsidian name = case lookup name vaults of
+  Just path -> do
+    runSysCmd $ "cd " <> path
+    runSysCmd "git add . && git commit -am 'update' && git push"
+  Nothing -> printText $ "Cannot find vault '" <> name <> "'"
