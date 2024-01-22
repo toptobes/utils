@@ -35,4 +35,4 @@ year :: IO Integer
 year = (\(y, _, _) -> y) <$> date
 
 fromWinHome :: Text -> Text
-fromWinHome path = [r|$(wslpath "$(wslvar USERPROFILE)")/|] <> path
+fromWinHome path = [r|"$(wslpath "$(wslvar USERPROFILE)")/|] <> path <> "\""

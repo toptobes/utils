@@ -129,7 +129,5 @@ vaults = fromList [("main", fromWinHome "Documents/Obsidian Vault")]
 
 backupObsidian :: Text -> UtActionF ()
 backupObsidian name = case lookup name vaults of
-  Just path -> do
-    runSysCmd $ "cd " <> path
-    runSysCmd "git add . && git commit -am 'update' && git push"
+  Just path -> runSysCmd $ "cd " <> path <> " && git add . && git commit -am 'update' && git push"
   Nothing -> printText $ "Cannot find vault '" <> name <> "'"
