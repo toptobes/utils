@@ -43,7 +43,9 @@ dependencies:
   - process
   - free
   - time
+  - aeson
   - file-embed
+  - optparse-applicative
 
 executables:
   app:

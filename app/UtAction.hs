@@ -6,6 +6,7 @@ import Control.Monad.Free
 import Control.Monad.Free.TH
 import System.Process
 import Utils
+import UtConfig
 
 type UtActionF = Free UtAction
 
@@ -15,6 +16,9 @@ data UtAction next
   | WithTemplate Text (Text -> next)
   | WithAbsTPath Text (Text -> next)
   | WithCurrYear (Integer -> next)
+  | WithCfgPath  (Text -> next)
+  | WithCfg  (UTConfig -> next)
+  | SaveCfg   UTConfig next
   deriving (Functor)
 
 $(makeFree ''UtAction)
@@ -26,3 +30,7 @@ runActions = iterM go where
   go (WithTemplate path next) = readTemplate path >>= next
   go (WithAbsTPath path next) = templatePath path >>= next 
   go (WithCurrYear next) = year >>= next
+  go (WithCfgPath next) = configPath >>= next
+  go (WithCfg next) = readConfig >>= next
+  go (SaveCfg cfg next) = saveConfig cfg >> next
+  

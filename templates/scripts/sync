@@ -1,0 +1,23 @@
+#!/bin/sh
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/toptobes-utils"
+
+mkdir -p "$config_dir"
+cd "$config_dir" || exit 1
+
+if ! test -s config.json; then 
+  echo "{}" > config.json
+fi
+
+mkdir -p templates
+cd templates || exit 2
+
+rm -r -- *
+
+pwd
+
+echo
+curl https://codeload.github.com/toptobes/utils/tar.gz/mistress | tar -xz --strip=2 utils-mistress/templates
+echo
+
+ls --color=auto .
