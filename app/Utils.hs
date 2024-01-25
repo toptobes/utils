@@ -8,6 +8,7 @@ import Data.Time.Clock
 import Data.Time.Calendar
 import Text.RawString.QQ
 import Options.Applicative
+import Data.List (maximum)
 
 (.-) :: (a -> b) -> (b -> c) -> a -> c
 f .- g = g . f
@@ -37,9 +38,21 @@ fromWinHome :: Text -> Text
 fromWinHome path = [r|"$(wslpath "$(wslvar USERPROFILE)")/|] <> path <> "\""
 
 mkCommand :: String -> String -> Parser a -> Mod CommandFields a
-mkCommand name desc p = command name $ info 
+mkCommand name desc p = command name $ info
   (helper <*> p)
   (fullDesc <> progDesc desc)
 
 posArg :: String -> Parser Text
 posArg = strArgument . metavar
+
+formatKVs :: Text -> [(Text, Text)] -> Text
+formatKVs pre kvs = case length kvs of
+  0 -> ""
+  _ -> (pre <>) $ T.intercalate ("\n" <> pre) $ map (formatKV pad) kvs
+  where
+    pad = maximum (map (T.length . fst) kvs)
+
+formatKV :: Int -> (Text, Text) -> Text
+formatKV pad = uncurry (<>) . second lpad . \p@(k, _) -> (k, p)
+  where
+    lpad (key, val) = T.replicate (pad - T.length key) " " <> "     " <> val

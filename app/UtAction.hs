@@ -17,8 +17,8 @@ data UtAction next
   | WithAbsTPath Text (Text -> next)
   | WithCurrYear (Integer -> next)
   | WithCfgPath  (Text -> next)
-  | WithCfg  (UTConfig -> next)
-  | SaveCfg   UTConfig next
+  | WithCfg  (UtConfig -> next)
+  | SaveCfg   UtConfig next
   deriving (Functor)
 
 $(makeFree ''UtAction)

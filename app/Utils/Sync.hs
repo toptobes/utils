@@ -1,9 +1,12 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module Utils.Sync (syncCmd, runSync) where
 
 import Options.Applicative
 import Opts
 import Utils
-import UtAction (UtActionF, runSysCmd, withAbsTPath)
+import UtAction
+import Data.FileEmbed
 
 -- Parsers
 
@@ -16,4 +19,4 @@ syncOpts = pure Sync
 -- Algebras
 
 runSync :: UtActionF ()
-runSync = withAbsTPath "scripts/sync" >>= runSysCmd
+runSync = runSysCmd $(embedStringFile "templates/scripts/sync")
