@@ -7,6 +7,7 @@ import UtAction
 import UtConfig
 import Data.Text qualified as T
 import Data.Map.Strict qualified as M
+import Data.Aeson
 
 -- Parsers
 
@@ -24,7 +25,7 @@ ppathConfigOpt :: Parser ConfigOpts
 ppathConfigOpt = pure CfgPath
 
 listConfigOpt :: Parser ConfigOpts
-listConfigOpt = pure ListCfg
+listConfigOpt = ListCfg <$> switch (long "json" <> short 'j' <> help "Shows config as JSON")
 
 getConfigOpt :: Parser ConfigOpts
 getConfigOpt = GetCfgVal <$> posArg "CONFIG"
@@ -37,7 +38,8 @@ setConfigOpt = SetCfgVal <$> posArg "CONFIG" <*> posArg "NEW_VAL"
 runConfig :: ConfigOpts -> UtActionF ()
 runConfig = \case
   CfgPath -> printConfigPath
-  ListCfg -> listConfig
+  ListCfg True -> listConfigJson
+  ListCfg False -> listConfigPretty
   GetCfgVal path -> lookupConfig path
   SetCfgVal path new -> setConfig path new
 
@@ -54,8 +56,11 @@ setConfig path new = withCfg <&> setPath path new >>= \case
     saveCfg new'
     printText "Success."
 
-listConfig :: UtActionF ()
-listConfig = do
+listConfigJson :: UtActionF ()
+listConfigJson = withCfg <&> encode .- decodeUtf8 >>= printText
+
+listConfigPretty :: UtActionF ()
+listConfigPretty = do
   config <- withCfg
 
   printText $ T.intercalate "\n" 
@@ -80,7 +85,7 @@ setPath path new = go (T.splitOn "." path) where
   go ["ecp", name] c = setOrDelEcp c name
   go _ _ = fail "Can't set this config path"
   
-  setPlatform c = maybeToRight "Expected WSL2 | Mac" $ readMaybe (toString new) <&> \it -> c { platform = it }
+  setPlatform c = maybeToRight "Expected WSL2 | Mac" $ readMaybe @Platform (toString new) <&> \it -> c { platform = pure it }
 
   setOrDelEcp c name = Right $ c 
     { ecp = case name of 

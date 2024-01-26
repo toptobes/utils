@@ -6,7 +6,7 @@ mkdir -p "$config_dir"
 cd "$config_dir" || exit 1
 
 if ! test -s config.json; then 
-  echo "{}" > config.json
+  echo '{"ecp":{"forall":"∀","lambda":"λ"}}' > config.json
 fi
 
 mkdir -p templates

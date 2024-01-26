@@ -9,7 +9,7 @@ newtype Opts = Opts
 data Command
   = Sync
   | Config    ConfigOpts
-  | Hpack     HPackOpts
+  | Haskell   HaskellOpts
   | EchoCP    Text
   | License   LicenseType
   | Obsidian  ObsidianOpts
@@ -18,13 +18,20 @@ data Command
 data ConfigOpts
   = GetCfgVal Text
   | SetCfgVal Text Text
-  | ListCfg
+  | ListCfg   Bool
   | CfgPath
+
+data HaskellOpts
+  = HsHpack HPackOpts
+  | HsInit Text HsInitType
 
 data HPackOpts
   = HpackAdd Text
   | HpackDel Text
-  | HpackNew Text
+
+data HsInitType 
+  = Cabal 
+  | Hpack
 
 data LicenseType 
   = MIT

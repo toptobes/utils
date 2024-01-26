@@ -23,7 +23,13 @@ configPath :: IO Text
 configPath = xdgConfigPath <&> (<> "config.json")
 
 xdgConfigPath :: IO Text
-xdgConfigPath = toText <$> getXdgDirectory XdgConfig "./toptobes-utils/"
+xdgConfigPath = do
+  dir <- getXdgDirectory XdgConfig "./toptobes-utils/"
+  
+  unlessM (doesDirectoryExist dir) $
+    error "run 'ut sync' first..."
+
+  pure $ toText dir
 
 var :: Text -> Text -> Text -> Text
 var name = T.replace ("${{" <> name <> "}}")

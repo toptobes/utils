@@ -22,7 +22,7 @@ executable app
       Utils
       Utils.Config
       Utils.EchoCP
-      Utils.Hpack
+      Utils.Haskell
       Utils.JetBrains
       Utils.Obsidian
       Utils.Sync
