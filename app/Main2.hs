@@ -12,10 +12,11 @@ import UtAction
 
 main :: IO ()
 main = execParser optsParser <&> coerce >>= runActions . \case
-  Sync -> runSync
+  Sync opts -> runSync opts
   Config opts -> runConfig opts
   Haskell opts -> runHs opts
   EchoCP key -> runEcp key
+  JetBrains opts -> runJB opts
   _ -> error "todo lol"
 
 optsParser :: ParserInfo Opts

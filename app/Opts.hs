@@ -7,13 +7,18 @@ newtype Opts = Opts
   }
 
 data Command
-  = Sync
+  = Sync      SyncOpts
   | Config    ConfigOpts
   | Haskell   HaskellOpts
   | EchoCP    Text
   | License   LicenseType
   | Obsidian  ObsidianOpts
   | JetBrains JetBrainsOpts
+
+data SyncOpts
+  = SyncPush
+  | SyncPull
+  | SyncInit
 
 data ConfigOpts
   = GetCfgVal Text
@@ -40,5 +45,10 @@ data ObsidianOpts
   = ObsidianWithVault Text Text
 
 data JetBrainsOpts
-  = JBVim  Bool
+  = JBVim  JBVimOpts
   | JBOpen Text (Maybe Text)
+
+data JBVimOpts
+  = JBVimPath
+  | JBVimSave
+  | JBVimEcho

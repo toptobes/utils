@@ -8,7 +8,9 @@ import Data.Time.Clock
 import Data.Time.Calendar
 import Text.RawString.QQ
 import Options.Applicative
-import Data.List (maximum)
+import Data.List
+import GHC.IO
+import Data.Text.IO
 
 (.-) :: (a -> b) -> (b -> c) -> a -> c
 f .- g = g . f
@@ -27,7 +29,7 @@ xdgConfigPath = do
   dir <- getXdgDirectory XdgConfig "./toptobes-utils/"
   
   unlessM (doesDirectoryExist dir) $
-    error "run 'ut sync' first..."
+    panik "run 'ut sync --init' first..."
 
   pure $ toText dir
 
@@ -62,3 +64,8 @@ formatKV :: Int -> (Text, Text) -> Text
 formatKV pad = uncurry (<>) . second lpad . \p@(k, _) -> (k, p)
   where
     lpad (key, val) = T.replicate (pad - T.length key) " " <> "     " <> val
+
+-- Poor kitten...
+panik :: Text -> a
+panik msg = unsafePerformIO (hPutStrLn stderr msg >> exitFailure)
+{-# NOINLINE panik #-}

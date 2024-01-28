@@ -14,9 +14,18 @@ syncCmd :: Mod CommandFields Command
 syncCmd = mkCommand "sync" "Syncs templates to your xdg-spec config dir" syncOpts
 
 syncOpts :: Parser Command
-syncOpts = pure Sync
+syncOpts = fmap Sync $
+      flag' SyncPush (long "push" <> help "pushes the config to your git repo")
+  <|> flag' SyncPull (long "pull" <> help "pulls the config from your git repo")
+  <|> flag' SyncInit (long "init" <> help "pulls the config from the central git repo")
 
 -- Algebras
 
-runSync :: UtActionF ()
-runSync = runSysCmd $(embedStringFile "templates/scripts/sync")
+runSync :: SyncOpts -> UtActionF ()
+runSync = \case
+  SyncPush -> undefined
+  SyncPull -> undefined
+  SyncInit -> syncInit
+
+syncInit :: UtActionF ()
+syncInit = runSysCmd $(embedStringFile "scripts/sync--init")

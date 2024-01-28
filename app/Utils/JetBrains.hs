@@ -1,21 +1,43 @@
-module Utils.JetBrains (jbCmd) where
+module Utils.JetBrains (jbCmd, runJB) where
 
 import Options.Applicative
 import Opts
 import Utils
+import UtAction
+import UtConfig
+
+-- Parsers
 
 jbCmd :: Mod CommandFields Command
 jbCmd = mkCommand "jb" "Jetbrains utils" $ JetBrains <$> subparser jbOpts
 
 jbOpts :: Mod CommandFields JetBrainsOpts
 jbOpts =
-     mkCommand "vim"  "Works with the .ideavim file" vim
-  <> mkCommand "open" "Opens an IDE"                open
+     mkCommand "vim"  "Works with the .ideavim file"  vimOpts
+  <> mkCommand "open" "Opens an IDE"                  open
 
-vim :: Parser JetBrainsOpts
-vim = JBVim <$> switch (long "save" <> short 's' <> help "Saves ivim file to template folder, makes/replaces backup of old template")
+vimOpts :: Parser JetBrainsOpts
+vimOpts = fmap JBVim $ 
+      flag' JBVimPath (long "path"  <> short 'p' <> help "Echoes path to .ideavim")
+  <|> flag' JBVimEcho (long "print" <> short 'e' <> help "Echoes the content of .ideavim")
+  <|> flag' JBVimSave (long "save"  <> short 's' <> help "Saves the .ideavim to /templates, mks backup")
 
 open :: Parser JetBrainsOpts
-open = JBOpen 
-  <$> posArg "IDE_NAME" 
-  <*> optional (posArg "PATH_TO_OPEN") 
+open = JBOpen
+  <$> posArg "IDE_NAME"
+  <*> optional (posArg "PATH_TO_OPEN")
+
+-- Algebras
+
+runJB :: JetBrainsOpts -> UtActionF ()
+runJB = \case 
+  JBOpen name path -> openIDE name path
+  JBVim opts -> undefined
+
+openIDE :: Text -> Maybe Text -> UtActionF ()
+openIDE ide fp = withCfg <&> platform >>= \case
+  Just WSL2 -> do
+    path <- withAbsTPath "../scripts/jb--wsl"
+    runSysCmd $ unwords $ [path, ide] <> maybeToList (toText <$> fp)
+  Just Mac -> panik "jb on mac todo lol"
+  Nothing -> panik "'platform' needs to be set!"

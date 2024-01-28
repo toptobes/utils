@@ -40,14 +40,14 @@ runConfig = \case
   CfgPath -> printConfigPath
   ListCfg True -> listConfigJson
   ListCfg False -> listConfigPretty
-  GetCfgVal path -> lookupConfig path
+  GetCfgVal path -> getConfig path
   SetCfgVal path new -> setConfig path new
 
 printConfigPath :: UtActionF ()
 printConfigPath = withCfgPath >>= printText
 
-lookupConfig :: Text -> UtActionF ()
-lookupConfig path = (withCfg <&> getPath path) >>= printText
+getConfig :: Text -> UtActionF ()
+getConfig path = (withCfg <&> lookupConfig path) >>= printText
 
 setConfig :: Text -> Text -> UtActionF ()
 setConfig path new = withCfg <&> setPath path new >>= \case
@@ -64,14 +64,14 @@ listConfigPretty = do
   config <- withCfg
 
   printText $ T.intercalate "\n" 
-    [ formatKV 9 ("platform:", getPath "platform" config)
+    [ formatKV 9 ("platform:", lookupConfig "platform" config)
     , case length config.ecp of
         0 -> formatKV 9 ("ecps:", "None")
         _ -> "ecps:\n" <> formatKVs " - " (M.toAscList $ ecp config)
     ]
 
-getPath :: Text -> UtConfig -> Text
-getPath path = go (T.splitOn "." path) where
+lookupConfig :: Text -> UtConfig -> Text
+lookupConfig path = go (T.splitOn "." path) where
   go :: [Text] -> UtConfig -> Text
   go ["platform"] c = (show <$> platform c) ?: "Unknown"
   go ["ecp"] c = formatKVs "" (M.toAscList c.ecp)
