@@ -16,7 +16,6 @@ executable app
   main-is: Main.hs
   other-modules:
       Main2
-      Opts
       UtAction
       UtConfig
       Utils
@@ -26,6 +25,7 @@ executable app
       Utils.JetBrains
       Utils.Obsidian
       Utils.Sync
+      UtOpts
       Paths_my_utils
   autogen-modules:
       Paths_my_utils

@@ -1,7 +1,7 @@
 module Main2 where
 
 import Options.Applicative
-import Opts
+import UtOpts
 import Utils.Sync
 import Utils.Config
 import Utils.Haskell
@@ -17,9 +17,10 @@ main = execParser optsParser <&> coerce >>= runActions . \case
   Haskell opts -> runHs opts
   EchoCP key -> runEcp key
   JetBrains opts -> runJB opts
+  Obsidian opts -> runObsid opts
   _ -> error "todo lol"
 
-optsParser :: ParserInfo Opts
+optsParser :: ParserInfo UtOpts
 optsParser = info
   (helper 
     <*> programOptions)
@@ -27,7 +28,7 @@ optsParser = info
     <> progDesc "ut."
     <> header   "ut — some random utils for myself")
 
-programOptions :: Parser Opts
-programOptions = Opts <$> subparser
+programOptions :: Parser UtOpts
+programOptions = UtOpts <$> subparser
   ( syncCmd <> configCmd <> hsCmd <> ecpCmd <> jbCmd <> obsidCmd
   )

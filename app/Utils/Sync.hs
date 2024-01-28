@@ -3,7 +3,7 @@
 module Utils.Sync (syncCmd, runSync) where
 
 import Options.Applicative
-import Opts
+import UtOpts
 import Utils
 import UtAction
 import UtConfig

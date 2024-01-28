@@ -1,7 +1,7 @@
 module Utils.JetBrains (jbCmd, runJB) where
 
 import Options.Applicative
-import Opts
+import UtOpts
 import Utils
 import UtAction
 import UtConfig
@@ -32,7 +32,7 @@ open = JBOpen
 runJB :: JetBrainsOpts -> UtActionF ()
 runJB = \case 
   JBOpen name path -> openIDE name path
-  JBVim opts -> undefined
+  JBVim _ -> panik "jb vim command todo lol"
 
 openIDE :: Text -> Maybe Text -> UtActionF ()
 openIDE ide fp = withCfg <&> platform >>= \case

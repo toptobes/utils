@@ -3,7 +3,7 @@
 module Utils.Haskell (hsCmd, runHs) where
 
 import Options.Applicative
-import Opts
+import UtOpts
 import Utils
 import UtAction
 import Text.RawString.QQ
@@ -41,7 +41,7 @@ runHs = \case
   HsHpack (HpackAdd pkg) -> hpackAdd pkg
   HsHpack (HpackDel pkg) -> hpackDel pkg
   HsInit name Hpack -> hpackNew name
-  HsInit name Cabal -> undefined
+  HsInit _ Cabal -> panik "init cabal todo lol"
 
 hpackAdd :: Text -> UtActionF ()
 hpackAdd name = runSysCmd cmd >> hpackRegen where 

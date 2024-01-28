@@ -1,8 +1,8 @@
 {-# LANGUAGE StrictData #-}
 
-module Opts where
+module UtOpts where
 
-newtype Opts = Opts
+newtype UtOpts = UtOpts
   { uncommand :: Command
   }
 

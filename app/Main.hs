@@ -1,12 +1,6 @@
-{-# LANGUAGE QuasiQuotes #-}
-
 module Main where
 
 import Options.Generic
-import UtAction
-import Text.RawString.QQ
-import Utils
-import Data.HashMap.Lazy (lookup)
 import qualified Main2
 
 data Ut w

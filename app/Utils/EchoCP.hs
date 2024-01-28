@@ -1,7 +1,7 @@
 module Utils.EchoCP (ecpCmd, runEcp) where
 
 import Options.Applicative
-import Opts
+import UtOpts
 import Utils
 import UtAction
 import UtConfig
@@ -23,10 +23,10 @@ runEcp key = do
 
   case config.ecp M.!? key of
     Just val -> printText val >> tryCP config val
-    Nothing -> printText "Not found..."
+    Nothing -> panik "Not found..."
 
 tryCP :: UtConfig -> Text -> UtActionF ()
 tryCP UtConfig { platform } text = case platform of
   Just WSL2 -> runSysCmd ("powershell.exe Set-Clipboard " <> text)
   Just Mac -> runSysCmd ("echo '" <> text <> "' | pbcopy")
-  Nothing -> printText "set platform to use clipboard"
+  Nothing -> panik "set platform to use clipboard"

@@ -10,20 +10,22 @@ data Platform = WSL2 | Mac
 
 data UtConfig = UtConfig
   { platform :: Maybe Platform
-  , repo :: Repo
-  , ecp :: Map Text Text
+  , repo     :: Repo
+  , ecp      :: Map Text Text
+  , vaults   :: Map Text Text
   } deriving (Show, Generic, ToJSON)
 
 data Repo = Repo 
-  { path :: Maybe Text
+  { path   :: Maybe Text
   , branch :: Maybe Text
   } deriving (Show, Read, Generic, ToJSON)
 
 instance FromJSON UtConfig where
   parseJSON = withObject "Config" $ \v -> UtConfig
     <$> v .:? "platform"
-    <*> v .:? "repo" .!= Repo Nothing Nothing
-    <*> v .:? "ecp"  .!= fromList []
+    <*> v .:? "repo"   .!= Repo Nothing Nothing
+    <*> v .:? "ecp"    .!= fromList []
+    <*> v .:? "vaults" .!= fromList []
 
 instance FromJSON Repo where
   parseJSON = withObject "Repo" $ \v -> Repo
