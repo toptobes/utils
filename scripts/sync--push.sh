@@ -14,7 +14,9 @@ git fetch
 git checkout -b "$branch" "origin/$branch"
 
 rm -r config.json scripts templates
-cp ../config.json ../scripts ../templates .
+cp ../config.json .
+cp ../scripts .
+cp ../templates .
 
 git add templates scripts config.json
 git commit -am 'cli-sync'
