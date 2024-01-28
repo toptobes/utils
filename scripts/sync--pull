@@ -16,13 +16,13 @@ for dir in templates scripts; do
   mkdir -p "$dir"
   cd "$dir" || exit 2
 
-  # rm -r -- *
+  rm -r -- *
 
   pwd
 
-  # echo
-  # curl "https://codeload.github.com/$owner/$repo/tar.gz/$branch" | tar -xz --strip=2 "$repo-$branch/$dir"
-  # echo
+  echo
+  curl "https://codeload.github.com/$owner/$repo/tar.gz/$branch" | tar -xz --strip=2 "$repo-$branch/$dir"
+  echo
 
   ls --color=auto .
 done
