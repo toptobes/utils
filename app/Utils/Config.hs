@@ -70,10 +70,10 @@ listConfigPretty = do
     , case config.repo of
         Repo Nothing Nothing -> formatKV 9 ("repo:", "None")
         Repo {..} -> "repo:\n" <> formatKVs " - " (catMaybes [("path",) <$> path, ("branch",) <$> branch])
-    , case length config.ecp of
+    , case M.size config.ecp of
         0 -> formatKV 9 ("ecps:", "None")
         _ -> "ecps:\n" <> formatKVs " - " (M.toAscList config.ecp)
-    , case length config.ecp of
+    , case M.size config.vaults of
         0 -> formatKV 9 ("vaults:", "None")
         _ -> "vaults:\n" <> formatKVs " - " (M.toAscList config.vaults)
     ]
