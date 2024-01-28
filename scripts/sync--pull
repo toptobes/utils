@@ -8,7 +8,12 @@ config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/toptobes-utils"
 mkdir -p "$config_dir"
 cd "$config_dir" || exit 1
 
-if ! test -s config.json; then 
+echo "Using repo $owner/$repo#$branch"
+echo
+
+if ! test -s config.json; then
+  echo "Initializing config.json"
+  echo
   echo '{"ecp":{"forall":"∀","lambda":"λ"}}' > config.json
 fi
 
@@ -22,9 +27,12 @@ for dir in templates scripts; do
 
   echo
   curl "https://codeload.github.com/$owner/$repo/tar.gz/$branch" | tar -xz --strip=2 "$repo-$branch/$dir"
-  echo
 
   ls --color=auto .
+  echo
 
   cd ..
 done
+
+echo "Giving exec perms to scripts"
+chmod +x scripts/*
