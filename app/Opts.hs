@@ -21,10 +21,14 @@ data SyncOpts
   | SyncInit
 
 data ConfigOpts
-  = GetCfgVal Text
-  | SetCfgVal Text Text
-  | ListCfg   Bool
+  = SetCfgVal Text Text
+  | ListGetCfg CfgListType
+  | ListSetCfg
   | CfgPath
+
+data CfgListType 
+  = CfgListPretty
+  | CfgListJSON
 
 data HaskellOpts
   = HsHpack HPackOpts

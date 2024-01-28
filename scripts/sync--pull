@@ -1,0 +1,23 @@
+#!/bin/sh
+
+owner=${1%/*}
+repo=${1#*/}
+branch="$2"
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/toptobes-utils"
+cd "$config_dir" || exit 1
+
+for dir in templates scripts; do
+  mkdir -p "$dir"
+  cd "$dir" || exit 2
+
+  # rm -r -- *
+
+  pwd
+
+  # echo
+  # curl "https://codeload.github.com/$owner/$repo/tar.gz/$branch" | tar -xz --strip=2 "$repo-$branch/$dir"
+  # echo
+
+  ls --color=auto .
+done

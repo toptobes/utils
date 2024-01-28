@@ -37,7 +37,7 @@ runJB = \case
 openIDE :: Text -> Maybe Text -> UtActionF ()
 openIDE ide fp = withCfg <&> platform >>= \case
   Just WSL2 -> do
-    path <- withAbsTPath "../scripts/jb--wsl"
+    path <- withCfgPath "scripts/jb--wsl"
     runSysCmd $ unwords $ [path, ide] <> maybeToList (toText <$> fp)
   Just Mac -> panik "jb on mac todo lol"
   Nothing -> panik "'platform' needs to be set!"

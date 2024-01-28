@@ -15,14 +15,17 @@ import Data.Text.IO
 (.-) :: (a -> b) -> (b -> c) -> a -> c
 f .- g = g . f
 
-readTemplate :: Text -> IO Text
-readTemplate = templatePath >=> (toString .- readFileBS <&> fmap decodeUtf8)
+-- readTemplate :: Text -> IO Text
+-- readTemplate = templatePath >=> (toString .- readFileBS <&> fmap decodeUtf8)
 
-templatePath :: Text -> IO Text
-templatePath rel = xdgConfigPath <&> (<> ("templates/" <> rel))
+-- templatePath :: Text -> IO Text
+-- templatePath rel = xdgConfigPath <&> (<> ("templates/" <> rel))
 
-configPath :: IO Text
-configPath = xdgConfigPath <&> (<> "config.json")
+configPath :: Text -> IO Text
+configPath rel = xdgConfigPath <&> (<> rel)
+
+configFile :: Text -> IO Text
+configFile = configPath >=> (toString .- readFileBS <&> fmap decodeUtf8)
 
 xdgConfigPath :: IO Text
 xdgConfigPath = do

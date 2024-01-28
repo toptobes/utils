@@ -17,37 +17,34 @@ configCmd =  mkCommand "conf" "Works with the config" $ Config <$> subparser con
 configOpts :: Mod CommandFields ConfigOpts
 configOpts =
      mkCommand "path" "Prints config file path"  ppathConfigOpt
-  <> mkCommand "list" "Lists the current config" listConfigOpt
-  <> mkCommand "get"  "Gets the given value"     getConfigOpt
+  <> mkCommand "get"  "Lists the current config" listConfigOpt
   <> mkCommand "set"  "Sets the given value"     setConfigOpt
 
 ppathConfigOpt :: Parser ConfigOpts
 ppathConfigOpt = pure CfgPath
 
 listConfigOpt :: Parser ConfigOpts
-listConfigOpt = ListCfg <$> switch (long "json" <> short 'j' <> help "Shows config as JSON")
-
-getConfigOpt :: Parser ConfigOpts
-getConfigOpt = GetCfgVal <$> posArg "CONFIG"
+listConfigOpt = fmap ListGetCfg $
+      flag' CfgListJSON   (long "json"   <> short 'j' <> help "Shows config as JSON")
+  <|> flag' CfgListPretty (long "pretty" <> short 'p' <> help "Shows config prettily")
 
 setConfigOpt :: Parser ConfigOpts
-setConfigOpt = SetCfgVal <$> posArg "CONFIG" <*> posArg "NEW_VAL"
+setConfigOpt = 
+      ListSetCfg <$ switch (long "list" <> short 'l' <> help "Lists settable options")
+  <|> SetCfgVal <$> posArg "CONFIG" <*> posArg "NEW_VAL"
 
 -- Algebras
 
 runConfig :: ConfigOpts -> UtActionF ()
 runConfig = \case
   CfgPath -> printConfigPath
-  ListCfg True -> listConfigJson
-  ListCfg False -> listConfigPretty
-  GetCfgVal path -> getConfig path
+  ListGetCfg CfgListJSON -> listConfigJson
+  ListGetCfg CfgListPretty -> listConfigPretty
+  ListSetCfg -> listConfigSettable
   SetCfgVal path new -> setConfig path new
 
 printConfigPath :: UtActionF ()
-printConfigPath = withCfgPath >>= printText
-
-getConfig :: Text -> UtActionF ()
-getConfig path = (withCfg <&> lookupConfig path) >>= printText
+printConfigPath = withCfgPath "config.json" >>= printText
 
 setConfig :: Text -> Text -> UtActionF ()
 setConfig path new = withCfg <&> setPath path new >>= \case
@@ -64,30 +61,38 @@ listConfigPretty = do
   config <- withCfg
 
   printText $ T.intercalate "\n" 
-    [ formatKV 9 ("platform:", lookupConfig "platform" config)
+    [ formatKV 9 ("platform:", (show <$> config.platform) ?: "Unknown")
+    , case config.repo of
+        Repo Nothing Nothing -> formatKV 9 ("repo:", "None")
+        Repo {..} -> "repo:\n" <> formatKVs " - " (catMaybes [("path",) <$> path, ("branch",) <$> branch])
     , case length config.ecp of
         0 -> formatKV 9 ("ecps:", "None")
-        _ -> "ecps:\n" <> formatKVs " - " (M.toAscList $ ecp config)
+        _ -> "ecps:\n" <> formatKVs " - " (M.toAscList config.ecp)
     ]
 
-lookupConfig :: Text -> UtConfig -> Text
-lookupConfig path = go (T.splitOn "." path) where
-  go :: [Text] -> UtConfig -> Text
-  go ["platform"] c = (show <$> platform c) ?: "Unknown"
-  go ["ecp"] c = formatKVs "" (M.toAscList c.ecp)
-  go ["ecp", name] c = (show <$> (c.ecp M.!? name )) ?: "Not found"
-  go _ _ = "Invalid config (do `ut config list`)"
+listConfigSettable :: UtActionF ()
+listConfigSettable = printText $ T.intercalate "\n"
+  [ "platform: current platform (WSL2 | Mac)"
+  , "repo.path: path of git repo to sync with (i.e. toptobes/utils)"
+  , "repo.branch: branch of aforementioned repo"
+  , "ecp.<key>: KV pair to access & print"
+  ]
 
 setPath :: Text -> Text -> UtConfig -> Either Text UtConfig
-setPath path new = go (T.splitOn "." path) where
-  go :: [Text] -> UtConfig -> Either Text UtConfig
-  go ["platform"] c = setPlatform c
-  go ["ecp", name] c = setOrDelEcp c name
-  go _ _ = fail "Can't set this config path"
+setPath path new c = go (T.splitOn "." path) where
+  go :: [Text] -> Either Text UtConfig
+  go ["platform"] = setPlatform
+  go ["repo", "path"] = setRepoPath
+  go ["repo", "branch"] = setRepoBranch
+  go ["ecp", name] = setOrDelEcp name
+  go _ = fail "Can't set this config path"
   
-  setPlatform c = maybeToRight "Expected WSL2 | Mac" $ readMaybe @Platform (toString new) <&> \it -> c { platform = pure it }
+  setPlatform = maybeToRight "Expected WSL2 | Mac" $ readMaybe @Platform (toString new) <&> \it -> c { platform = pure it }
 
-  setOrDelEcp c name = Right $ c 
+  setRepoPath = pure $ c { repo = Repo (pure new) c.repo.branch }
+  setRepoBranch = pure $ c { repo = Repo c.repo.path (pure new) }
+
+  setOrDelEcp name = Right $ c
     { ecp = case name of 
         "NULL" -> M.delete name c.ecp
         _      -> M.insert name new c.ecp

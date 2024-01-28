@@ -73,5 +73,5 @@ hpackRegen = runSysCmd "hpack"
 
 hpackNew :: Text -> UtActionF ()
 hpackNew name = do
-  template <- withTemplate "haskell/package.yaml"
+  template <- withCfgPath "template/haskell/package.yaml"
   printText $ var "name" name template

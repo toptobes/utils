@@ -9,15 +9,4 @@ if ! test -s config.json; then
   echo '{"ecp":{"forall":"∀","lambda":"λ"}}' > config.json
 fi
 
-mkdir -p templates
-cd templates || exit 2
-
-rm -r -- *
-
-pwd
-
-echo
-curl https://codeload.github.com/toptobes/utils/tar.gz/mistress | tar -xz --strip=2 utils-mistress/templates
-echo
-
-ls --color=auto .
+./sync--pull toptobes/utils mistress

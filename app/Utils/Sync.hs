@@ -6,6 +6,7 @@ import Options.Applicative
 import Opts
 import Utils
 import UtAction
+import UtConfig
 import Data.FileEmbed
 
 -- Parsers
@@ -23,9 +24,24 @@ syncOpts = fmap Sync $
 
 runSync :: SyncOpts -> UtActionF ()
 runSync = \case
-  SyncPush -> undefined
-  SyncPull -> undefined
+  SyncPush -> syncPush
+  SyncPull -> syncPull
   SyncInit -> syncInit
 
 syncInit :: UtActionF ()
 syncInit = runSysCmd $(embedStringFile "scripts/sync--init")
+
+withRepo :: (Text -> Text -> UtActionF a) -> UtActionF a
+withRepo fn = withCfg <&> repo >>= \case
+  Repo (Just path) (Just branch) -> fn path branch
+  _ -> panik "Both repo.path and repo.branch must be set..."
+
+syncPush :: UtActionF ()
+syncPush = withRepo $ \gpath gbranch -> do
+  path <- withCfgPath "scripts/sync--push"
+  runSysCmd $ unwords [path, gpath, gbranch]
+
+syncPull :: UtActionF ()
+syncPull = withRepo $ \gpath gbranch -> do
+  path <- withCfgPath "scripts/sync--pull"
+  runSysCmd $ unwords [path, gpath, gbranch]
