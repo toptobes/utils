@@ -24,12 +24,10 @@ ppathConfigOpt :: Parser ConfigOpts
 ppathConfigOpt = pure CfgPath
 
 listConfigOpt :: Parser ConfigOpts
-listConfigOpt = fmap ListGetCfg $
-      flag' CfgListJSON   (long "json"   <> short 'j' <> help "Shows config as JSON")
-  <|> flag' CfgListPretty (long "pretty" <> short 'p' <> help "Shows config prettily")
+listConfigOpt = ListGetCfg <$> flag CfgListPretty CfgListJSON (long "json" <> short 'j' <> help "Shows config as JSON")
 
 setConfigOpt :: Parser ConfigOpts
-setConfigOpt = 
+setConfigOpt =
       ListSetCfg <$ switch (long "list" <> short 'l' <> help "Lists settable options")
   <|> SetCfgVal <$> posArg "CONFIG" <*> posArg "NEW_VAL"
 
@@ -60,7 +58,7 @@ listConfigPretty :: UtActionF ()
 listConfigPretty = do
   config <- withCfg
 
-  printText $ T.intercalate "\n" 
+  printText $ T.intercalate "\n"
     [ formatKV 9 ("platform:", (show <$> config.platform) ?: "Unknown")
     , case config.repo of
         Repo Nothing Nothing -> formatKV 9 ("repo:", "None")
@@ -91,20 +89,20 @@ setPath path new c = go (T.splitOn "." path) where
   go ["ecp", name] = setOrDelEcp name
   go ["vault", name] = setOrDelVault name
   go _ = fail "Can't set this config path"
-  
+
   setPlatform = maybeToRight "Expected WSL2 | Mac" $ readMaybe @Platform (toString new) <&> \it -> c { platform = pure it }
 
   setRepoPath = pure $ c { repo = Repo (pure new) c.repo.branch }
   setRepoBranch = pure $ c { repo = Repo c.repo.path (pure new) }
 
   setOrDelEcp name = Right $ c
-    { ecp = case name of 
+    { ecp = case new of
         "NULL" -> M.delete name c.ecp
         _      -> M.insert name new c.ecp
     }
 
   setOrDelVault name = Right $ c
-    { vaults = case name of 
+    { vaults = case new of
         "NULL" -> M.delete name c.vaults
         _      -> M.insert name new c.vaults
     }
