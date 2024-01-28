@@ -25,4 +25,6 @@ for dir in templates scripts; do
   echo
 
   ls --color=auto .
+
+  cd ..
 done
