@@ -29,7 +29,7 @@ runSync = \case
   SyncInit -> syncInit
 
 syncInit :: UtActionF ()
-syncInit = runSysCmd $ "#!/bin/sh\nset -- toptobes/utils mistress\n" <> $(embedStringFile "scripts/sync--pull")
+syncInit = runSysCmd $ "#!/bin/sh\nset -- toptobes/utils mistress\n" <> $(embedStringFile "scripts/sync--pull.sh")
 
 withRepo :: (Text -> Text -> UtActionF a) -> UtActionF a
 withRepo fn = withCfg <&> repo >>= \case
@@ -38,10 +38,10 @@ withRepo fn = withCfg <&> repo >>= \case
 
 syncPush :: UtActionF ()
 syncPush = withRepo $ \gpath gbranch -> do
-  path <- withCfgPath "scripts/sync--push"
+  path <- withCfgPath "scripts/sync--push.sh"
   runSysCmd $ unwords [path, gpath, gbranch]
 
 syncPull :: UtActionF ()
 syncPull = withRepo $ \gpath gbranch -> do
-  path <- withCfgPath "scripts/sync--pull"
+  path <- withCfgPath "scripts/sync--pull.sh"
   runSysCmd $ unwords [path, gpath, gbranch]
