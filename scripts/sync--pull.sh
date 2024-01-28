@@ -14,7 +14,7 @@ echo
 if ! test -s config.local.json; then
   echo "Initializing config.local.json"
   echo
-  echo '{"ecp":{"forall":"∀","lambda":"λ"}}' > config.local.json
+  echo '{}' > config.local.json
 fi
 
 curl -o repo.tar.gz "https://codeload.github.com/$owner/$repo/tar.gz/$branch"
