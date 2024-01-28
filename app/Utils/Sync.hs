@@ -29,7 +29,7 @@ runSync = \case
   SyncInit -> syncInit
 
 syncInit :: UtActionF ()
-syncInit = runSysCmd $(embedStringFile "scripts/sync--init")
+syncInit = runSysCmd $ "#!/bin/sh\nset -- toptobes/utils mistress\n" <> $(embedStringFile "scripts/sync--pull")
 
 withRepo :: (Text -> Text -> UtActionF a) -> UtActionF a
 withRepo fn = withCfg <&> repo >>= \case

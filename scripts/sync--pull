@@ -5,7 +5,12 @@ repo=${1#*/}
 branch="$2"
 
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/toptobes-utils"
+mkdir -p "$config_dir"
 cd "$config_dir" || exit 1
+
+if ! test -s config.json; then 
+  echo '{"ecp":{"forall":"∀","lambda":"λ"}}' > config.json
+fi
 
 for dir in templates scripts; do
   mkdir -p "$dir"
