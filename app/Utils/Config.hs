@@ -12,12 +12,12 @@ import Data.Aeson
 -- Parsers
 
 configCmd :: Mod CommandFields Command
-configCmd =  mkCommand "conf" "Works with the config" $ Config <$> subparser configOpts
+configCmd = mkCommand "conf" "Works with the config" $ Config <$> subparser configOpts
 
 configOpts :: Mod CommandFields ConfigOpts
 configOpts =
      mkCommand "path" "Prints config file path"  ppathConfigOpt
-  <> mkCommand "get"  "Lists the current config" listConfigOpt
+  <> mkCommand "list" "Lists the current config" listConfigOpt
   <> mkCommand "set"  "Sets the given value"     setConfigOpt
 
 ppathConfigOpt :: Parser ConfigOpts
@@ -95,14 +95,10 @@ setPath path new c = go (T.splitOn "." path) where
   setRepoPath = pure $ c { repo = Repo (pure new) c.repo.branch }
   setRepoBranch = pure $ c { repo = Repo c.repo.path (pure new) }
 
-  setOrDelEcp name = Right $ c
-    { ecp = case new of
-        "NULL" -> M.delete name c.ecp
-        _      -> M.insert name new c.ecp
-    }
+  setOrDelEcp name = pure $ c { ecp = setOrDel c.ecp name }
+  setOrDelVault name = pure $ c { vaults = setOrDel c.vaults name }
 
-  setOrDelVault name = Right $ c
-    { vaults = case new of
-        "NULL" -> M.delete name c.vaults
-        _      -> M.insert name new c.vaults
-    }
+  setOrDel :: Map Text Text -> Text -> Map Text Text
+  setOrDel m name = case new of
+    "NULL" -> M.delete name m
+    _      -> M.insert name new m

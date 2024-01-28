@@ -11,7 +11,7 @@ data Command
   | Config    ConfigOpts
   | Haskell   HaskellOpts
   | EchoCP    Text
-  | License   LicenseType
+  | License   LicenseOpts
   | Obsidian  ObsidianOpts
   | JetBrains JetBrainsOpts
 
@@ -41,6 +41,9 @@ data HPackOpts
 data HsInitType 
   = Cabal 
   | Hpack
+
+data LicenseOpts
+  = PrintLicense LicenseType Text
 
 data LicenseType 
   = MIT

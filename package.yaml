@@ -37,7 +37,6 @@ dependencies:
     mixin:
       - (Relude as Prelude)
       - ""
-  - optparse-generic
   - raw-strings-qq
   - directory
   - process

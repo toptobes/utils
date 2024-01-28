@@ -1,28 +1,27 @@
 module Main where
 
-import Options.Generic
 import qualified Main2
 
-data Ut w
-  = Hp     { new  :: Maybe Text, add :: Maybe Text, rm :: w ::: Maybe Text <#> "d" }
-  | MIT    { name :: w ::: Text <!> "toptobes"}
-  | Forall { nocp :: Bool }
-  | Lambda { nocp :: Bool }
-  | IVim   { save :: Bool }
-  | OVim   { save :: Bool }
-  | Obsid  { bkup :: Maybe Text, pull :: Maybe Text, diff :: Maybe Text, bsd :: Maybe Bool }
-  | JB     Text (Maybe FilePath)
-  deriving (Generic)
+-- data Ut w
+--   = Hp     { new  :: Maybe Text, add :: Maybe Text, rm :: w ::: Maybe Text <#> "d" }
+--   | MIT    { name :: w ::: Text <!> "toptobes"}
+--   | Forall { nocp :: Bool }
+--   | Lambda { nocp :: Bool }
+--   | IVim   { save :: Bool }
+--   | OVim   { save :: Bool }
+--   | Obsid  { bkup :: Maybe Text, pull :: Maybe Text, diff :: Maybe Text, bsd :: Maybe Bool }
+--   | JB     Text (Maybe FilePath)
+--   deriving (Generic)
 
-deriving instance Show (Ut Unwrapped)
+-- deriving instance Show (Ut Unwrapped)
 
-instance ParseRecord (Ut Wrapped) where 
-  parseRecord = parseRecordWithModifiers modifiers
+-- instance ParseRecord (Ut Wrapped) where 
+--   parseRecord = parseRecordWithModifiers modifiers
 
-modifiers :: Modifiers
-modifiers = defaultModifiers
-  { shortNameModifier = firstLetter
-  }
+-- modifiers :: Modifiers
+-- modifiers = defaultModifiers
+--   { shortNameModifier = firstLetter
+--   }
 
 main :: IO ()
 main = Main2.main

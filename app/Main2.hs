@@ -8,6 +8,7 @@ import Utils.Haskell
 import Utils.EchoCP
 import Utils.JetBrains
 import Utils.Obsidian
+import Utils.License
 import UtAction
 
 main :: IO ()
@@ -18,7 +19,7 @@ main = execParser optsParser <&> coerce >>= runActions . \case
   EchoCP key -> runEcp key
   JetBrains opts -> runJB opts
   Obsidian opts -> runObsid opts
-  _ -> error "todo lol"
+  License opts -> runLicense opts
 
 optsParser :: ParserInfo UtOpts
 optsParser = info
@@ -30,5 +31,5 @@ optsParser = info
 
 programOptions :: Parser UtOpts
 programOptions = UtOpts <$> subparser
-  ( syncCmd <> configCmd <> hsCmd <> ecpCmd <> jbCmd <> obsidCmd
+  ( syncCmd <> configCmd <> hsCmd <> ecpCmd <> jbCmd <> obsidCmd <> licenseCmd
   )

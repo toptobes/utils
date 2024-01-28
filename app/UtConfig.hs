@@ -4,6 +4,7 @@ module UtConfig where
 
 import Data.Aeson
 import Utils
+import System.Directory
 
 data Platform = WSL2 | Mac
   deriving (Show, Read, Generic, FromJSON, ToJSON)
@@ -44,3 +45,15 @@ saveConfig :: UtConfig -> IO ()
 saveConfig cfg = do
   path <- configPath "config.json"
   writeFileLBS (toString path) $ encode cfg
+
+configFile :: Text -> IO Text
+configFile = configPath >=> (toString .- readFileBS <&> fmap decodeUtf8)
+
+configPath :: Text -> IO Text
+configPath rel = do
+  dir <- getXdgDirectory XdgConfig "./toptobes-utils/"
+  
+  unlessM (doesDirectoryExist dir) $
+    panik "run 'ut sync --init' first..."
+
+  pure $ toText dir <> rel
