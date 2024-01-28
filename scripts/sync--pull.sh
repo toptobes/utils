@@ -11,17 +11,21 @@ cd "$config_dir" || exit 1
 echo "Using repo $owner/$repo#$branch"
 echo
 
+if ! test -s config.local.json; then
+  echo "Initializing config.local.json"
+  echo
+  echo '{"ecp":{"forall":"∀","lambda":"λ"}}' > config.local.json
+fi
+
 curl -o repo.tar.gz "https://codeload.github.com/$owner/$repo/tar.gz/$branch"
+echo
 
-# if ! test -s config.json; then
-#   echo "Initializing config.json"
-#   echo
-#   echo '{"ecp":{"forall":"∀","lambda":"λ"}}' > config.json
-# fi
+to_replace="config.share.json templates scripts"
 
-rm -r config.json templates scripts
+# shellcheck disable=SC2086
+rm -r $to_replace
 
-for dir in templates scripts config.json; do
+for dir in $to_replace; do
   tar -xzf repo.tar.gz --strip=1 "$repo-$branch/$dir"
 done
 

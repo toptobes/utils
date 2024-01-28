@@ -8,6 +8,7 @@ import UtConfig
 import Data.Text qualified as T
 import Data.Map.Strict qualified as M
 import Data.Aeson
+import Relude.Extra
 
 -- Parsers
 
@@ -42,7 +43,7 @@ runConfig = \case
   SetCfgVal path new -> setConfig path new
 
 printConfigPath :: UtActionF ()
-printConfigPath = withCfgPath "config.json" >>= printText
+printConfigPath = withCfgPath "" >>= printText
 
 setConfig :: Text -> Text -> UtActionF ()
 setConfig path new = withCfg <&> setPath path new >>= \case
@@ -52,7 +53,13 @@ setConfig path new = withCfg <&> setPath path new >>= \case
     printText "Success."
 
 listConfigJson :: UtActionF ()
-listConfigJson = withCfg <&> encode .- decodeUtf8 >>= printText
+listConfigJson = withCfg 
+  <&> dup 
+   .- bimap Local Share 
+   .- bimap encode encode
+   .- both decodeUtf8 
+   .- (\(a, b) -> a <> "\n" <> b) 
+  >>= printText
 
 listConfigPretty :: UtActionF ()
 listConfigPretty = do

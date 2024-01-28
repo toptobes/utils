@@ -14,12 +14,15 @@ data UtConfig = UtConfig
   , repo     :: Repo
   , ecp      :: Map Text Text
   , vaults   :: Map Text Text
-  } deriving (Show, Generic, ToJSON)
+  } deriving (Show, Generic)
 
-data Repo = Repo 
+data Repo = Repo
   { path   :: Maybe Text
   , branch :: Maybe Text
   } deriving (Show, Read, Generic, ToJSON)
+
+newtype Local = Local  UtConfig
+newtype Share = Share UtConfig
 
 instance FromJSON UtConfig where
   parseJSON = withObject "Config" $ \v -> UtConfig
@@ -33,18 +36,47 @@ instance FromJSON Repo where
     <$> v .:? "path"
     <*> v .:? "branch"
 
+instance ToJSON Local where
+  toJSON (Local UtConfig {..}) = object
+    [ "platform" .= platform
+    , "vaults"   .= vaults
+    ]
+
+instance ToJSON Share where
+  toJSON (Share UtConfig {..}) = object
+    [ "ecp"  .= ecp
+    , "repo" .= repo
+    ]
+
 readConfig :: IO UtConfig
 readConfig = do
-  path <- configPath "config.json"
-  text <- readFileLBS (toString path)
-  pure $! fromMaybe
-    (panik "Couldn't decode config—double check it?")
-    (decode text)
+  localCfg <- mkConfig "config.local.json"
+  shareCfg <- mkConfig "config.share.json"
+
+  pure $ UtConfig
+    { platform = localCfg.platform
+    , vaults   = localCfg.vaults
+    , ecp  = shareCfg.ecp
+    , repo = shareCfg.repo
+    }
+  where
+    mkConfig :: Text -> IO UtConfig
+    mkConfig file = do
+      path <- configPath file
+      text <- readFileLBS (toString path)
+      pure $! fromMaybe
+        (panik $ "Couldn't decode '" <> file <> "'—double check it?")
+        (decode text)
 
 saveConfig :: UtConfig -> IO ()
 saveConfig cfg = do
-  path <- configPath "config.json"
-  writeFileLBS (toString path) $ encode cfg
+  go (Local cfg) "config.local.json"
+  go (Share cfg) "config.share.json"
+  where
+    go :: (ToJSON w) => w -> Text -> IO ()
+    go cfg' file = do
+      path <- configPath file
+      writeFileLBS (toString path) $ encode cfg'
 
 configFile :: Text -> IO Text
 configFile = configPath >=> (toString .- readFileBS <&> fmap decodeUtf8)
@@ -52,7 +84,7 @@ configFile = configPath >=> (toString .- readFileBS <&> fmap decodeUtf8)
 configPath :: Text -> IO Text
 configPath rel = do
   dir <- getXdgDirectory XdgConfig "./toptobes-utils/"
-  
+
   unlessM (doesDirectoryExist dir) $
     panik "run 'ut sync --init' first..."
 

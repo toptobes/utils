@@ -37,3 +37,6 @@ formatKV pad = uncurry (<>) . second lpad . \p@(k, _) -> (k, p)
 panik :: Text -> a
 panik msg = unsafePerformIO (hPutStrLn stderr msg >> exitFailure)
 {-# NOINLINE panik #-}
+
+both :: Bifunctor f => (a -> b) -> f a a -> f b b
+both fn = bimap fn fn

@@ -13,10 +13,12 @@ git remote add origin "https://github.com/$owner/$repo.git"
 git fetch
 git checkout -b "$branch" "origin/$branch"
 
-rm -r config.json scripts templates
-cp -r ../config.json ../scripts ../templates .
+for file in config.share.json templates scripts; do
+  rm -r $file
+  cp -r ../$file .
+  git add $file
+done
 
-git add templates scripts config.json
 git commit -am 'cli-sync'
 git push origin "$branch"
 
