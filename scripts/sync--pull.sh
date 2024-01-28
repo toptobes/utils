@@ -11,28 +11,24 @@ cd "$config_dir" || exit 1
 echo "Using repo $owner/$repo#$branch"
 echo
 
-if ! test -s config.json; then
-  echo "Initializing config.json"
-  echo
-  echo '{"ecp":{"forall":"∀","lambda":"λ"}}' > config.json
-fi
+curl -o repo.tar.gz "https://codeload.github.com/$owner/$repo/tar.gz/$branch"
 
-for dir in templates scripts; do
-  mkdir -p "$dir"
-  cd "$dir" || exit 2
+# if ! test -s config.json; then
+#   echo "Initializing config.json"
+#   echo
+#   echo '{"ecp":{"forall":"∀","lambda":"λ"}}' > config.json
+# fi
 
-  rm -r -- *
+rm -r config.json templates scripts
 
-  pwd
-
-  echo
-  curl "https://codeload.github.com/$owner/$repo/tar.gz/$branch" | tar -xz --strip=2 "$repo-$branch/$dir"
-
-  ls --color=auto .
-  echo
-
-  cd ..
+for dir in templates scripts config.json; do
+  tar -xzf repo.tar.gz --strip=1 "$repo-$branch/$dir"
 done
+
+rm repo.tar.gz
+
+tree
+echo
 
 echo "Giving exec perms to scripts"
 chmod +x scripts/*
