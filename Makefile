@@ -1,8 +1,10 @@
 .PHONY: ut
 
+LOC?=/usr/local/bin
+
 ut:
 	@hpack
-	@cabal build app
-	@sudo cp $(shell cabal list-bin app) /usr/local/bin/ut
+	@cabal build app -j --ghc-options=-j
+	@sudo cp $(shell cabal list-bin app) $(LOC)/ut
 	@echo "------------"
-	@ls /usr/local/bin
+	@ls $(LOC)

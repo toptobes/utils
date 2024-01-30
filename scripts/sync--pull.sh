@@ -31,7 +31,7 @@ done
 
 rm repo.tar.gz
 
-tree
+tree -C
 echo
 
 echo "Giving exec perms to scripts"
