@@ -15,7 +15,6 @@ build-type:     Simple
 executable app
   main-is: Main.hs
   other-modules:
-      Main2
       UtAction
       UtConfig
       Utils
