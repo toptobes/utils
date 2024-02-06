@@ -25,6 +25,7 @@ data ConfigOpts
   | ListGetCfg CfgListType
   | ListSetCfg
   | CfgPath
+  | CfgAutocomplete
 
 data CfgListType 
   = CfgListPretty

@@ -13,16 +13,16 @@ import Relude.Extra
 -- Parsers
 
 configCmd :: Mod CommandFields Command
-configCmd = mkCommand "conf" "Works with the config" $ Config <$> subparser configOpts
+configCmd = mkCommand "config" "Works with the config" $ Config <$> 
+  (   subparser configOpts 
+  <|> flag' CfgPath (short 'p' <> long "path" <> help "Prints config folder path")
+  <|> flag' CfgAutocomplete (short 'a' <> long "autocomplete-help" <> help "Prints out resources to enable autocomplete")
+  )
 
 configOpts :: Mod CommandFields ConfigOpts
 configOpts =
-     mkCommand "path" "Prints config file path"  ppathConfigOpt
-  <> mkCommand "list" "Lists the current config" listConfigOpt
+     mkCommand "list" "Lists the current config" listConfigOpt
   <> mkCommand "set"  "Sets the given value"     setConfigOpt
-
-ppathConfigOpt :: Parser ConfigOpts
-ppathConfigOpt = pure CfgPath
 
 listConfigOpt :: Parser ConfigOpts
 listConfigOpt = ListGetCfg <$> flag CfgListPretty CfgListJSON (long "json" <> short 'j' <> help "Shows config as JSON")
@@ -41,9 +41,16 @@ runConfig = \case
   ListGetCfg CfgListPretty -> listConfigPretty
   ListSetCfg -> listConfigSettable
   SetCfgVal path new -> setConfig path new
+  CfgAutocomplete -> printAutocomplete
 
 printConfigPath :: UtActionF ()
 printConfigPath = withCfgPath "" >>= printText
+
+printAutocomplete :: UtActionF ()
+printAutocomplete = printText $ T.intercalate "\n"
+  [ "bash: https://stackoverflow.com/a/59126063"
+  , "zsh:  https://stackoverflow.com/a/61861568"
+  ]
 
 setConfig :: Text -> Text -> UtActionF ()
 setConfig path new = withCfg <&> setPath path new >>= \case

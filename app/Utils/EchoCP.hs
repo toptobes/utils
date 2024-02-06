@@ -10,7 +10,7 @@ import Data.Map.Strict qualified as M
 -- Parsers
 
 ecpCmd :: Mod CommandFields Command
-ecpCmd = mkCommand "ecp" "common text to echo/copy" toEcho
+ecpCmd = mkCommand "ecp" "Common text to echo/copy" toEcho
 
 toEcho :: Parser Command
 toEcho = EchoCP <$> posArg "DEP"
