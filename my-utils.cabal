@@ -23,8 +23,8 @@ executable app
       Utils.Haskell
       Utils.JetBrains
       Utils.License
-      Utils.Obsidian
       Utils.Sync
+      Utils.With
       UtOpts
       Paths_my_utils
   autogen-modules:

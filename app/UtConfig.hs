@@ -13,7 +13,7 @@ data UtConfig = UtConfig
   { platform :: Maybe Platform
   , repo     :: Repo
   , ecp      :: Map Text Text
-  , vaults   :: Map Text Text
+  , with   :: Map Text Text
   } deriving (Show, Generic)
 
 data Repo = Repo
@@ -29,7 +29,7 @@ instance FromJSON UtConfig where
     <$> v .:? "platform"
     <*> v .:? "repo"   .!= Repo Nothing Nothing
     <*> v .:? "ecp"    .!= fromList []
-    <*> v .:? "vaults" .!= fromList []
+    <*> v .:? "with" .!= fromList []
 
 instance FromJSON Repo where
   parseJSON = withObject "Repo" $ \v -> Repo
@@ -39,7 +39,7 @@ instance FromJSON Repo where
 instance ToJSON Local where
   toJSON (Local UtConfig {..}) = object
     [ "platform" .= platform
-    , "vaults"   .= vaults
+    , "with"   .= with
     ]
 
 instance ToJSON Share where
@@ -55,7 +55,7 @@ readConfig = do
 
   pure $ UtConfig
     { platform = localCfg.platform
-    , vaults   = localCfg.vaults
+    , with   = localCfg.with
     , ecp  = shareCfg.ecp
     , repo = shareCfg.repo
     }

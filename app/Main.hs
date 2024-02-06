@@ -5,9 +5,9 @@ import UtOpts
 import Utils.Sync
 import Utils.Config
 import Utils.Haskell
-import Utils.EchoCP
+import Utils.EchoCP ( ecpCmd, runEcp )
 import Utils.JetBrains
-import Utils.Obsidian
+import Utils.With
 import Utils.License
 import UtAction
 
@@ -18,7 +18,7 @@ main = customExecParser (prefs showHelpOnEmpty) optsParser <&> coerce >>= runAct
   Haskell opts -> runHs opts
   EchoCP key -> runEcp key
   JetBrains opts -> runJB opts
-  Obsidian opts -> runObsid opts
+  With opts -> runWith opts
   License opts -> runLicense opts
 
 optsParser :: ParserInfo UtOpts
@@ -31,5 +31,5 @@ optsParser = info
 
 programOptions :: Parser UtOpts
 programOptions = UtOpts <$> subparser
-  ( syncCmd <> configCmd <> hsCmd <> ecpCmd <> jbCmd <> obsidCmd <> licenseCmd
+  ( syncCmd <> configCmd <> hsCmd <> ecpCmd <> jbCmd <> withCmd <> licenseCmd
   )

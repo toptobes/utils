@@ -12,7 +12,7 @@ data Command
   | Haskell   HaskellOpts
   | EchoCP    Text
   | License   LicenseOpts
-  | Obsidian  ObsidianOpts
+  | With      WithOpts
   | JetBrains JetBrainsOpts
 
 data SyncOpts
@@ -48,8 +48,9 @@ data LicenseOpts
 data LicenseType 
   = MIT
 
-data ObsidianOpts
-  = ObsidianWithVault Text Text
+data WithOpts
+  = WithFolder Text Text
+  | ListTagged
 
 data JetBrainsOpts
   = JBVim  JBVimOpts
