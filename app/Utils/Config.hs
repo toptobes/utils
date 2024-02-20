@@ -13,7 +13,7 @@ import Relude.Extra
 -- Parsers
 
 configCmd :: Mod CommandFields Command
-configCmd = mkCommand "config" "Works with the config" $ Config <$> 
+configCmd = mkCommand "conf" "Works with the config" $ Config <$> 
   (   subparser configOpts 
   <|> flag' CfgPath (short 'p' <> long "path" <> help "Prints config folder path")
   <|> flag' CfgAutocomplete (short 'a' <> long "autocomplete-help" <> help "Prints out resources to enable autocomplete")
