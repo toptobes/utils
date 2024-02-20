@@ -8,7 +8,7 @@ import UtAction
 -- Parsers
 
 licenseCmd :: Mod CommandFields Command
-licenseCmd = mkCommand "li" "License utils" $ License <$> licenseOpts
+licenseCmd = mkCommand "license" "License utils" $ License <$> licenseOpts
 
 licenseOpts :: Parser LicenseOpts
 licenseOpts = PrintLicense
